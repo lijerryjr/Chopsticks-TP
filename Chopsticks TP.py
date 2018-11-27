@@ -3,7 +3,8 @@
 #ID:xiangheh, jerryl
 #Commends: we choose not to use a 2d-list representation so this code might be
 #cancerous to code trace. Have Fun!
-#-------------------------------------------
+#-------------------------------------------------------------------------------
+#=====================================change player=============================
 import random
 def getStartingPlayer():
     #very first function
@@ -21,6 +22,8 @@ def getOtherPlayer(player):
         return 'U'
     else:
         return 'C'
+
+#===============================get COMPUTER's moves and results================
 
 def getComputerMove(computerLeft, computerRight):
     if(computerLeft==0):
@@ -48,6 +51,8 @@ def getResultsOfComputerMove(addingHand, targetHand, computerLeft, computerRight
         userRight += computerRight
         addedInteger=computerRight
     return [addedInteger, userLeft, userRight]#addedInt is the C's hand
+
+#===============================get PLAYER's moves and results================
     
 def getUserAddingHand():
     #input P's hand that P is gonna add to the C's hand
@@ -84,6 +89,8 @@ def getResultsOfUserMove(addingHand, targetHand, computerLeft, computerRight, us
         computerRight += userRight
         addedInteger=userRight
     return [addedInteger, computerLeft, computerRight]
+
+#=================check Zero-out================================================
         
 def checkZerosOut(userRight, userLeft, computerRight, computerLeft):
     #if one hand reaches 5 or above, make it 0
@@ -97,6 +104,32 @@ def checkZerosOut(userRight, userLeft, computerRight, computerLeft):
         computerLeft=0
     return [userRight, userLeft, computerRight, computerLeft]
 
+#==============================allow COMPUTER to split==========================
+fingersInOneHand = 5
+
+def askComputerSplit(computerLeft, computerRight):
+    if ((computerLeft + computerRight) == 3 or
+        (computerLeft + computerRight) == 4 or
+        (computerLeft + computerRight) == 5)
+        computerSplit(computerLeft, computerRight)
+
+def computerSplit(computerLeft, computerRight):
+    computerLeft = random.choice([2,3])
+    computerRight = fingersInOneHand - computerLeft
+
+#==============================allow PLAYER to split============================
+def askUserSplit():
+    userChoice = input("Do you want to split and how? [Y]es or [N]o")
+    if userChoice == 'Y':
+        userSplit()
+    else:
+        return False
+    
+def userSplit(userLeft, userRight):
+
+
+#==============================THE GAME=========================================
+
 def playChopsticks():
     print('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ')
     print('Time to get choppy bois!')
@@ -105,6 +138,7 @@ def playChopsticks():
     computerRight=1
     userLeft=1
     userRight=1
+    print('================CP LEFT====CP RIGHT==================')
     print('================UR LEFT====UR RIGHT==================')
     print('Computer Hand:', '[    ' + str(computerLeft)+'    ,    '+str(computerRight) + '    ]')
     print('Your Hand:', '    [    ' + str(userLeft)+'    ,    '+str(userRight) + '    ]')
@@ -112,28 +146,37 @@ def playChopsticks():
     while ((computerLeft+computerRight)>0 or (userRight+userLeft)>0):
         if (currentPlayer == 'C'):
             # computer's turn
-            currentMove = getComputerMove(computerLeft, computerRight)
-            addingHand=currentMove[0]
-            targetHand=currentMove[1]
-            resultsOfMove = getResultsOfComputerMove(addingHand, targetHand, computerLeft, computerRight, userLeft, userRight)
-            userLeft=resultsOfMove[1]
-            userRight=resultsOfMove[2]
-            print('I add', resultsOfMove[0], 'to User', targetHand)
+            if askComputerSplit():
+                computerSplit(computerLeft, computerRight)
+                print(Computer splitted!)
+            else:
+                currentMove = getComputerMove(computerLeft, computerRight)
+                addingHand=currentMove[0]
+                targetHand=currentMove[1]
+                resultsOfMove = getResultsOfComputerMove(addingHand, targetHand, computerLeft, computerRight, userLeft, userRight)
+                userLeft=resultsOfMove[1]
+                userRight=resultsOfMove[2]
+                print('Computer added', resultsOfMove[0], 'to User', targetHand)
         else:
             # user's turn
-            addingHand = getUserAddingHand()
-            targetHand = getUserTargetHand()
-            resultsOfMove=getResultsOfUserMove(addingHand, targetHand, computerLeft, computerRight, userLeft, userRight)
-            computerLeft=resultsOfMove[1]
-            computerRight=resultsOfMove[2]
-            print('You add', resultsOfMove[0], 'to Computer', targetHand)
+            if askUserSplit():
+                userSplit(userLeft, userRight)
+                print(User splitted!)
+            else:
+                addingHand = getUserAddingHand()
+                targetHand = getUserTargetHand()
+                resultsOfMove=getResultsOfUserMove(addingHand, targetHand, computerLeft, computerRight, userLeft, userRight)
+                computerLeft=resultsOfMove[1]
+                computerRight=resultsOfMove[2]
+                print('User added', resultsOfMove[0], 'to Computer', targetHand)
         #next step is to check zero-out
         userLeft=checkZerosOut(userRight, userLeft, computerRight, computerLeft)[1]
         userRight=checkZerosOut(userRight, userLeft, computerRight, computerLeft)[0]
         computerLeft=checkZerosOut(userRight, userLeft, computerRight, computerLeft)[3]
         computerRight=checkZerosOut(userRight, userLeft, computerRight, computerLeft)[2]
         #give the calculated result
-        print('=====================================================')
+        print('================CP LEFT====CP RIGHT==================')
+        print('================UR LEFT====UR RIGHT==================')
         print('Computer Hand:', '[    ' + str(computerLeft)+'    ,    '+str(computerRight) + '    ]')
         print('Your Hand:', '    [    ' + str(userLeft)+'    ,    '+str(userRight) + '    ]')
         print('=====================================================')
