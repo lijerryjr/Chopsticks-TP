@@ -1,6 +1,7 @@
 #Chopsticks TP for 15-110 
 #Phil Huang. Jerry Li
 #ID:xiangheh, jerryl
+#-------------------------------------------
 import random
 def getStartingPlayer():
     while True:
