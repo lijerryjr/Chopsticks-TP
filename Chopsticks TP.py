@@ -109,7 +109,8 @@ def checkZerosOut(userRight, userLeft, computerRight, computerLeft):
 def askComputerSplit(computerLeft, computerRight):
     if (computerLeft == computerRight):
         return False
-    if (((computerLeft + computerRight) == 3)
+    if (((computerLeft + computerRight) == 2)
+        or ((computerLeft + computerRight) == 3)
         or ((computerLeft + computerRight) == 4)
         or ((computerLeft + computerRight) == 5)
         or ((computerLeft + computerRight) == 6)):
@@ -118,7 +119,10 @@ def askComputerSplit(computerLeft, computerRight):
         return False
 
 def computerSplit(computerLeft, computerRight):
-    if (computerLeft + computerRight) == 3:
+    if (computerLeft + computerRight) == 2:
+        computerLeft = 1
+        computerRight = 1
+    elif (computerLeft + computerRight) == 3:
         computerLeft = random.choice([1,2])
         computerRight = 3 - computerLeft
     elif (computerLeft + computerRight) == 4:
@@ -151,8 +155,8 @@ def askUserSplit(userLeft, userRight):
 def userSplit(userLeft, userRight):
     while True:
         print('How would you like to split?')
-        leftChoice = input('What number would your left hand have? --- > ')
-        rightChoice = input('What number would your right hand have? ---> ')
+        leftChoice = int(input('What number would your left hand have? --- > '))
+        rightChoice = int(input('What number would your right hand have? ---> '))
         #print(userLeft, userRight, leftChoice, rightChoice)
         if (leftChoice + rightChoice) == (userLeft + userRight):
             return  [leftChoice, rightChoice]
@@ -170,6 +174,7 @@ def playChopsticks():
     computerRight=1
     userLeft=1
     userRight=1
+    userSplitTimes = 0
     print('================CP LEFT====CP RIGHT==================')
     print('================UR LEFT====UR RIGHT==================')
     print('Computer Hand:', '[    ' + str(computerLeft)+'    ,    '+str(computerRight) + '    ]')
@@ -200,6 +205,7 @@ def playChopsticks():
                 userLeft = splitUserMove[0]
                 userRight = splitUserMove[1]
                 print('User splitted!')
+                userSplitTimes += 1
             else:
                 addingHand = getUserAddingHand()
                 targetHand = getUserTargetHand()
@@ -207,6 +213,10 @@ def playChopsticks():
                 computerLeft=resultsOfMove[1]
                 computerRight=resultsOfMove[2]
                 print('User added', resultsOfMove[0], 'to Computer', targetHand)
+        #check if split too many times
+        if userSplitTimes > 7:
+            print('User has splitted too many times! GAME OVER!')
+            return
         #next step is to check zero-out
         userLeft=checkZerosOut(userRight, userLeft, computerRight, computerLeft)[1]
         userRight=checkZerosOut(userRight, userLeft, computerRight, computerLeft)[0]
@@ -220,10 +230,10 @@ def playChopsticks():
         print('=====================================================')
         currentPlayer = getOtherPlayer(currentPlayer)
         #Next code determines winner
-        if(computerLeft+computerRight==0):
+        if(computerLeft + computerRight == 0):
             print('User wins!')
             return
-        elif(userLeft+userRight==0):
+        elif(userLeft + userRight == 0):
             print('Computer wins!')
             return
     
