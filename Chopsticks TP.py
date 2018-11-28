@@ -61,7 +61,7 @@ def getUserAddingHand():
         if (addingHand=='L' or addingHand=='R'):
             return addingHand
         else:
-            print('That is not a legal response. Please enter L or R.')
+            print('That is not a legal response. Please enter [L] or [R]')
             print('--------------------------------------------------')
 
 def getUserTargetHand():
@@ -71,7 +71,7 @@ def getUserTargetHand():
         if (targetHand=='L' or targetHand=='R'):
             return targetHand
         else:
-            print('That is not a legal response. Please enter L or R.')
+            print('That is not a legal response. Please enter [L] or [R]')
             print('--------------------------------------------------')
         
 def getResultsOfUserMove(addingHand, targetHand, computerLeft, computerRight, userLeft, userRight):
@@ -105,28 +105,57 @@ def checkZerosOut(userRight, userLeft, computerRight, computerLeft):
     return [userRight, userLeft, computerRight, computerLeft]
 
 #==============================allow COMPUTER to split==========================
-fingersInOneHand = 5
 
 def askComputerSplit(computerLeft, computerRight):
-    if ((computerLeft + computerRight) == 3 or
-        (computerLeft + computerRight) == 4 or
-        (computerLeft + computerRight) == 5)
-        computerSplit(computerLeft, computerRight)
+    if (((computerLeft + computerRight) == 3)
+        or ((computerLeft + computerRight) == 4)
+        or ((computerLeft + computerRight) == 5)
+        or ((computerLeft + computerRight) == 6) and (computerLeft != computerRight)):
+        return True
+    else:
+        return False
 
 def computerSplit(computerLeft, computerRight):
-    computerLeft = random.choice([2,3])
-    computerRight = fingersInOneHand - computerLeft
+    if (computerLeft + computerRight) == 3:
+        computerLeft = random.choice([1,2])
+        computerRight = 3 - computerLeft
+    elif (computerLeft + computerRight) == 4:
+        computerleft = 2
+        computerRight = 2
+    elif (computerLeft + computerRight) == 5:
+        computerLeft = random.choice([2,3])
+        computerRight = 5 - computerLeft
+    elif (computerLeft + computerRight) == 6:
+        computerLeft = 3
+        computerRight = 3
+    return [computerLeft, computerRight]
 
 #==============================allow PLAYER to split============================
-def askUserSplit():
-    userChoice = input("Do you want to split and how? [Y]es or [N]o")
-    if userChoice == 'Y':
-        userSplit()
+
+def askUserSplit(userLeft, userRight):
+    if 1<(userLeft + userRight)<9:
+        while True:
+            userChoice = input("Do you want to split? [Y]es or [N]o ---> ")
+            if userChoice == 'Y':
+                return True
+            elif userChoice == 'N':
+                return False
+            else:
+                print('That is not a legal response. Please enter a single uppercase letter.')
+                print('---------------------------------------------------------------------')
     else:
         return False
     
 def userSplit(userLeft, userRight):
-
+    while True:
+        print('How would you like to split?')
+        leftChoice = input('What number would your left hand have? --- > ')
+        rightChoice = input('What number would your right hand have? ---> ')
+        if (leftChoice + rightChoice) == (userLeft + userRight):
+            return [leftChoice, rightChoice]
+        else:
+            print('That is not a legal response. Please enter a single digit.')
+            print('----------------------------------------------------------')
 
 #==============================THE GAME=========================================
 
@@ -143,12 +172,15 @@ def playChopsticks():
     print('Computer Hand:', '[    ' + str(computerLeft)+'    ,    '+str(computerRight) + '    ]')
     print('Your Hand:', '    [    ' + str(userLeft)+'    ,    '+str(userRight) + '    ]')
     print('=====================================================')
-    while ((computerLeft+computerRight)>0 or (userRight+userLeft)>0):
+    while ((computerLeft + computerRight)>0 or (userRight + userLeft)>0):
         if (currentPlayer == 'C'):
             # computer's turn
-            if askComputerSplit():
-                computerSplit(computerLeft, computerRight)
-                print(Computer splitted!)
+            if askComputerSplit(computerLeft, computerRight) == True:
+                #SMART computer will split if conditions are met.
+                splitComputerMove = computerSplit(computerLeft, computerRight)
+                computerLeft = splitComputerMove[0]
+                computerRight = splitComputerMove[1]
+                print('Computer splitted!')
             else:
                 currentMove = getComputerMove(computerLeft, computerRight)
                 addingHand=currentMove[0]
@@ -159,9 +191,12 @@ def playChopsticks():
                 print('Computer added', resultsOfMove[0], 'to User', targetHand)
         else:
             # user's turn
-            if askUserSplit():
-                userSplit(userLeft, userRight)
-                print(User splitted!)
+            if askUserSplit(userLeft, userRight) == True:
+                #ask if PLAYER wants to split. If not, go to add.
+                splitUserMove = userSplit(userLeft, userRight)
+                userLeft = splitUserMove[0]
+                userRight = splitUserMove[1]
+                print('User splitted!')
             else:
                 addingHand = getUserAddingHand()
                 targetHand = getUserTargetHand()
