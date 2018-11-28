@@ -57,7 +57,7 @@ def getResultsOfComputerMove(addingHand, targetHand, computerLeft, computerRight
 def getUserAddingHand():
     #input P's hand that P is gonna add to the C's hand
     while True:
-        addingHand=input('Which of your hand will you add from, [L]eft or [R]ight?')
+        addingHand=input('Which of your hand will you add from, [L]eft or [R]ight? ---> ')
         if (addingHand=='L' or addingHand=='R'):
             return addingHand
         else:
@@ -67,7 +67,7 @@ def getUserAddingHand():
 def getUserTargetHand():
     #input C's hand that P wants to add to
     while True:
-        targetHand=input('Which of Computer hand will you add to, [L]eft or [R]ight?')
+        targetHand=input('Which of Computer hand will you add to, [L]eft or [R]ight? --- >')
         if (targetHand=='L' or targetHand=='R'):
             return targetHand
         else:
@@ -107,10 +107,12 @@ def checkZerosOut(userRight, userLeft, computerRight, computerLeft):
 #==============================allow COMPUTER to split==========================
 
 def askComputerSplit(computerLeft, computerRight):
+    if (computerLeft == computerRight):
+        return False
     if (((computerLeft + computerRight) == 3)
         or ((computerLeft + computerRight) == 4)
         or ((computerLeft + computerRight) == 5)
-        or ((computerLeft + computerRight) == 6) and (computerLeft != computerRight)):
+        or ((computerLeft + computerRight) == 6)):
         return True
     else:
         return False
@@ -151,8 +153,9 @@ def userSplit(userLeft, userRight):
         print('How would you like to split?')
         leftChoice = input('What number would your left hand have? --- > ')
         rightChoice = input('What number would your right hand have? ---> ')
+        #print(userLeft, userRight, leftChoice, rightChoice)
         if (leftChoice + rightChoice) == (userLeft + userRight):
-            return [leftChoice, rightChoice]
+            return  [leftChoice, rightChoice]
         else:
             print('That is not a legal response. Please enter a single digit.')
             print('----------------------------------------------------------')
