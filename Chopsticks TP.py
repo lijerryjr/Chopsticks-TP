@@ -22,6 +22,16 @@ def getOtherPlayer(player):
         return 'U'
     else:
         return 'C'
+        
+def setComputerDifficulty():
+    #sets computer difficulty
+    while True:
+        difficulty = input('What difficulty do you wish to set? [H]ard or [N]ormal? ---> ')
+        if ((difficulty == 'H') or (difficulty == 'N')):
+            return difficulty
+        else:
+            print('That is not a legal response. Please enter a single uppercase letter.')
+            print('---------------------------------------------------------------------')
 
 #===============================get COMPUTER's moves and results================
 
@@ -107,39 +117,83 @@ def checkZerosOut(userRight, userLeft, computerRight, computerLeft):
 #==============================allow COMPUTER to split==========================
 
 def askComputerSplit(computerLeft, computerRight):
-    if (computerLeft == computerRight):
+    computerCount=computerLeft+computerRight
+    if (computerCount<2 or computerCount>6):
         return False
-    if (((computerLeft + computerRight) == 2)
-        or ((computerLeft + computerRight) == 3)
-        or ((computerLeft + computerRight) == 4)
-        or ((computerLeft + computerRight) == 5)
-        or ((computerLeft + computerRight) == 6)):
-        return True
     else:
-        return False
+        return True
 
-def computerSplit(computerLeft, computerRight):
-    if (computerLeft + computerRight) == 2:
-        computerLeft = 1
-        computerRight = 1
-    elif (computerLeft + computerRight) == 3:
-        computerLeft = random.choice([1,2])
-        computerRight = 3 - computerLeft
-    elif (computerLeft + computerRight) == 4:
-        computerleft = 2
-        computerRight = 2
-    elif (computerLeft + computerRight) == 5:
-        computerLeft = random.choice([2,3])
-        computerRight = 5 - computerLeft
-    elif (computerLeft + computerRight) == 6:
-        computerLeft = 3
-        computerRight = 3
-    return [computerLeft, computerRight]
+def computerSplit(computerLeft, computerRight, userLeft, userRight):
+    computerCount=computerLeft+computerRight
+    #for sticks in range (initialCount+1):
+    if(computerCount<4):
+        if(computerLeft==computerCount or computerRight==computerCount):
+            #if all sticks on one hand, split
+            computerLeft=1
+            computerRight=computerCount-computerLeft
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+        else:
+            computerLeft=computerCount
+            computerRight=0
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+    elif(computerCount==4):
+        if(computerLeft==computerCount or computerRight==computerCount):
+            #if all sticks on one hand, split
+            computerLeft=1
+            computerRight=computerCount-computerLeft
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+            computerLeft=2
+            computerRight=computerCount-computerLeft
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+        elif(computerLeft==1 or computerLeft==3):
+            computerLeft=computerCount
+            computerRight=0
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+            computerLeft=2
+            computerRight=computerCount-computerLeft
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+        else:
+            computerLeft=computerCount
+            computerRight=0
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+            computerLeft=1
+            computerRight=computerCount-computerLeft
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+    else:
+        if(computerLeft==3 or computerRight==3):
+            computerLeft=4
+            computerRight=computerCount-computerLeft
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+        else:
+            computerLeft=3
+            computerRight=computerCount-computerLeft
+            if(computerLeft+userLeft<5 and computerRight+userLeft<5 and computerLeft+userRight<5 and computerRight+userRight<5):
+                #checks so that the user cannot eliminate any of the computer's hands
+                return [computerLeft, computerRight]
+    return False
 
 #==============================allow PLAYER to split============================
 
 def askUserSplit(userLeft, userRight):
-    if 1<(userLeft + userRight)<9:
+    if 1<(userLeft + userRight)<7:
         while True:
             userChoice = input("Do you want to split? [Y]es or [N]o ---> ")
             if userChoice == 'Y':
@@ -153,14 +207,27 @@ def askUserSplit(userLeft, userRight):
         return False
     
 def userSplit(userLeft, userRight):
+    userCount=userLeft+userRight
     while True:
         print('How would you like to split?')
-        leftChoice = int(input('What number would your left hand have? --- > '))
-        rightChoice = int(input('What number would your right hand have? ---> '))
-        #print(userLeft, userRight, leftChoice, rightChoice)
-        if (leftChoice + rightChoice) == (userLeft + userRight):
-            return  [leftChoice, rightChoice]
-        else:
+        try:
+            leftChoice = int(input('What number would your left hand have? --- > '))
+            rightChoice = userCount-leftChoice
+            if(leftChoice==userLeft or leftChoice==userRight):
+                print('You trickster! You must make a viable change to the count on either hand!')
+                print('----------------------------------------------------------')
+            elif(leftChoice>4 or rightChoice>4):
+                print('You know you cannot have 5 or more fingers on either hand!')
+                print('----------------------------------------------------------')
+            elif(leftChoice<0 or rightChoice<0):
+                print('You cannot have less than 0 fingers on either hand!')
+                print('----------------------------------------------------------')
+            elif (leftChoice + rightChoice) == userCount:
+                return  [leftChoice, rightChoice]
+            else:
+                print('You must make sure both hands add up to the same initial amount!')
+                print('----------------------------------------------------------')
+        except:
             print('That is not a legal response. Please enter a single digit.')
             print('----------------------------------------------------------')
 
@@ -175,20 +242,30 @@ def playChopsticks():
     userLeft=1
     userRight=1
     userSplitTimes = 0
+    computerDifficulty=setComputerDifficulty()
     print('================CP LEFT====CP RIGHT==================')
     print('================UR LEFT====UR RIGHT==================')
     print('Computer Hand:', '[    ' + str(computerLeft)+'    ,    '+str(computerRight) + '    ]')
     print('Your Hand:', '    [    ' + str(userLeft)+'    ,    '+str(userRight) + '    ]')
     print('=====================================================')
-    while ((computerLeft + computerRight)>0 or (userRight + userLeft)>0):
+    while ((computerLeft + computerRight)>0 and (userRight + userLeft)>0):
         if (currentPlayer == 'C'):
             # computer's turn
-            if askComputerSplit(computerLeft, computerRight) == True:
-                #SMART computer will split if conditions are met.
-                splitComputerMove = computerSplit(computerLeft, computerRight)
-                computerLeft = splitComputerMove[0]
-                computerRight = splitComputerMove[1]
-                print('Computer splitted!')
+            if (computerDifficulty=='H'):
+                if (askComputerSplit(computerLeft, computerRight) == True and computerSplit(computerLeft, computerRight, userLeft, userRight)!=False):
+                    #SMART computer will split if conditions are met.
+                    splitComputerMove = computerSplit(computerLeft, computerRight, userLeft, userRight)
+                    computerLeft = splitComputerMove[0]
+                    computerRight = splitComputerMove[1]
+                    print('Computer splitted!')
+                else:
+                    currentMove = getComputerMove(computerLeft, computerRight)
+                    addingHand=currentMove[0]
+                    targetHand=currentMove[1]
+                    resultsOfMove = getResultsOfComputerMove(addingHand, targetHand, computerLeft, computerRight, userLeft, userRight)
+                    userLeft=resultsOfMove[1]
+                    userRight=resultsOfMove[2]
+                    print('Computer added', resultsOfMove[0], 'to User', targetHand)
             else:
                 currentMove = getComputerMove(computerLeft, computerRight)
                 addingHand=currentMove[0]
