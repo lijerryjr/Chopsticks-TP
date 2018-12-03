@@ -2,10 +2,9 @@
 # Chopsticks TP for 15-110, Fall 2018
 # Phil Huang, Jerry Li
 # ID:xiangheh, jerryl
-# Commends: we choose not to use a 2d-list representation so this code might be
-# cancerous to code trace. Have Fun!
+
 #*******************************************************************************
-#
+
 #=====================================change player=============================
 
 import random
@@ -13,11 +12,11 @@ import random
 def getStartingPlayer():
     #very first function to get a player
     while True:
-        player = input('Who starts, [U]ser or [C]omputer? ---> ')
+        player = input('Who starts, [U]ser or [C]omputer? ---> ').upper()
         if ((player == 'U') or (player == 'C')):
             return player
         else:
-            print('That is not a legal response. Please enter a single uppercase letter.')
+            print('That is not a legal response. Please enter U or C.')
             print('---------------------------------------------------------------------')
 
 def getOtherPlayer(player):
@@ -30,12 +29,33 @@ def getOtherPlayer(player):
 def setComputerDifficulty():
     #sets computer difficulty
     while True:
-        difficulty = input('What difficulty do you wish to set? [H]ard or [N]ormal? ---> ')
+        difficulty = input('What difficulty do you wish to set? [H]ard or [N]ormal? ---> ').upper()
         if ((difficulty == 'H') or (difficulty == 'N')):
             return difficulty
         else:
-            print('That is not a legal response. Please enter a single uppercase letter.')
+            print('That is not a legal response. Please enter H or N.')
             print('---------------------------------------------------------------------')
+
+#===============================instructions====================================
+def startingScreen():
+    text="Welcome to Chopsticks! Each player starts with two hands and one finger on each hand. During each round, players may choose to either split their hand (keep total number of fingers the same but change number of fingers on each hand, e.g. from [1,3] to [2,2]) or add to their opponent’s hand. If a player’s hand reaches a sum of 5 fingers or more, that hand “zeros out” and becomes a closed fist until the player decides to split their hand or the other player taps that empty hand. If both of a player’s hands zero out, that player loses. Have fun!"
+    return text
+
+#===============================hint on how to win==============================
+def askHint():
+    #asks user if he/she wants the hint
+    while True:
+        response=input('Would you like a hint on how to win? [Y]es or [N]o ---> ').upper()
+        if ((response == 'Y') or (response == 'N')):
+            return response
+        else:
+            print('That is not a legal response. Please enter Y or N.')
+            print('---------------------------------------------------------------------')
+
+def hint():
+    #gives hint
+    hint='There is no algorithm to always win--the game of chopsticks can technically be played infinitely. However, to maximize your possibilities of winning, you should try splitting whenever possible while making sure that your opponent cannot eliminate any of your hands--this will generally force your opponent to tap one of your hands, building up your arsenal of fingers. Whenever possible, try eliminating one of your opponent’s hands.'
+    return hint
 
 #===============================get COMPUTER's moves and results================
 
@@ -71,24 +91,24 @@ def getResultsOfComputerMove(addingHand, targetHand, computerLeft, computerRight
 def getUserAddingHand(userLeft, userRight):
     #input P's hand that P is gonna add to the C's hand
     while True:
-        addingHand=input('Which of your hand will you add from, [L]eft or [R]ight? ---> ')
+        addingHand=input('Which of your hand will you add from, [L]eft or [R]ight? ---> ').upper()
         if (addingHand == 'L' and userLeft == 0) or (addingHand == 'R' and userRight == 0):
             print("You cannot add 0 to your opponent's hand!")
             print('--------------------------------------------------')
         elif (addingHand=='L' or addingHand=='R'):
             return addingHand
         else:
-            print('That is not a legal response. Please enter [L] or [R]')
+            print('That is not a legal response. Please enter L or R.')
             print('--------------------------------------------------')
 
 def getUserTargetHand():
     #input C's hand that P wants to add to
     while True:
-        targetHand=input('Which of Computer hand will you add to, [L]eft or [R]ight? ---> ')
+        targetHand=input('Which of Computer hand will you add to, [L]eft or [R]ight? ---> ').upper()
         if (targetHand=='L' or targetHand=='R'):
             return targetHand
         else:
-            print('That is not a legal response. Please enter [L] or [R]')
+            print('That is not a legal response. Please enter L or R')
             print('--------------------------------------------------')
         
 def getResultsOfUserMove(addingHand, targetHand, computerLeft, computerRight, userLeft, userRight):
@@ -202,9 +222,10 @@ def computerSplit(computerLeft, computerRight, userLeft, userRight):
 #==============================allow PLAYER to split============================
 
 def askUserSplit(userLeft, userRight):
+    #asks if user wants to split hand
     if 1<(userLeft + userRight)<7:
         while True:
-            userChoice = input("Do you want to split? [Y]es or [N]o ---> ")
+            userChoice = input('Do you want to split? [Y]es or [N]o ---> ').upper()
             if userChoice == 'Y':
                 return True
             elif userChoice == 'N':
@@ -216,6 +237,7 @@ def askUserSplit(userLeft, userRight):
         return False
     
 def userSplit(userLeft, userRight):
+    #asks user how he/she wishes to split hand
     userCount=userLeft+userRight
     splitCounter = 0
     while True:
@@ -230,19 +252,20 @@ def userSplit(userLeft, userRight):
             rightChoice = userCount-leftChoice
             #auto-calculated the right hand and test the legality of input
             if(leftChoice==userLeft or leftChoice==userRight):
+                #if the user chooses such that either hand is equal to how it was before splitting, this is illegal
                 print('You trickster! You must make a viable change to the count on either hand!')
                 print('----------------------------------------------------------')
             elif(leftChoice>4 or rightChoice>4):
                 print('You know you cannot have 5 or more fingers on either hand!')
                 print('----------------------------------------------------------')
             elif(leftChoice<0 or rightChoice<0):
-            #you CAN zero out yourself
+                #you CAN zero out yourself
                 print('You cannot have less than 0 fingers on either hand!')
                 print('----------------------------------------------------------')
             elif (leftChoice + rightChoice) == userCount:
                 return  [leftChoice, rightChoice]
             else:
-            #new hands don't add up
+                #new hands don't add up
                 print('You must make sure both hands add up to the same initial amount!')
                 print('----------------------------------------------------------')
         except:
@@ -277,7 +300,8 @@ def letUserPlay(userLeft, userRight, computerLeft, computerRight):
 
 def playChopsticks():
     print('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ')
-    print('Time to get choppy bois!')
+    print(startingScreen())
+    #Sets basic values for game
     currentPlayer = getStartingPlayer()
     computerLeft = 1
     computerRight = 1
@@ -290,6 +314,11 @@ def playChopsticks():
     print('Computer Hand:', '[    ' + str(computerLeft)+'    ,    '+str(computerRight) + '    ]')
     print('Your Hand:', '    [    ' + str(userLeft)+'    ,    '+str(userRight) + '    ]')
     print('=====================================================')
+    #Asks if user wants hint and gives hint if the response is Yes
+    hintResponse=askHint()
+    if(hintResponse=='Y' or hintResponse=='N'):
+        print(hint())
+    #Main Game with plays and responses
     while ((computerLeft + computerRight)>0 and (userRight + userLeft)>0):
         if (currentPlayer == 'C'):
             # computer's turn
@@ -331,7 +360,7 @@ def playChopsticks():
                 computerRight = computerHandAfter[1]
         #check if split too many times
         if userSplitTimes > 7:
-            print('User has splitted too many times! GAME OVER!')
+            print('User has split too many times! GAME OVER!')
             return
         #next step is to check zero-out
         userLeft = checkZerosOut(userLeft)
@@ -348,9 +377,11 @@ def playChopsticks():
         #Next code determines winner
         if(computerLeft + computerRight == 0):
             print('User wins!')
+            print('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ')
             return
         elif(userLeft + userRight == 0):
             print('Computer wins!')
+            print('* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ')
             return
     
 playChopsticks()
